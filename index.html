@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>Изучение изохорного процесса в газах</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Виртуальная лабораторная работа №25 по физике: проверка закона Шарля для изохорного процесса.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: лабораторный стол — слева стенд с приборами, справа пульт и показания, ниже журнал измерений и график; вкладки идут в порядке урока */
+:root{
+  --bg:#edf1f4; --surface:#ffffff; --surface-2:#f4f7f9; --ink:#17202b; --muted:#5a6676; --line:#d3dbe3;
+  --accent:#0a6b84; --accent-ink:#ffffff; --accent-soft:#dcedf2;
+  --heat:#dd4b25; --heat-2:#f4a63a; --heat-soft:#fbe4da;
+  --good:#22804f; --good-soft:#dcefe4; --warn:#a86a0c; --warn-soft:#f6ead2;
+  --steel:#8a97a6; --steel-dark:#4f5b69; --glass:#e6f0f5; --liquid:#d0303a; --grid:#e1e7ed;
+  --f-display:"Unbounded","Golos Text",system-ui,sans-serif;
+  --f-body:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --f-math:"Cambria Math","STIX Two Math","Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e141a; --surface:#151d26; --surface-2:#1b2530; --ink:#e4ebf2; --muted:#93a2b3; --line:#283543;
+    --accent:#53b6d0; --accent-ink:#06222b; --accent-soft:#12313b;
+    --heat:#ff7448; --heat-2:#ffbf5c; --heat-soft:#3a2219;
+    --good:#4dc48a; --good-soft:#123324; --warn:#e3a94a; --warn-soft:#352812;
+    --steel:#6f7d8d; --steel-dark:#a9b5c2; --glass:#1a2a36; --liquid:#ff5560; --grid:#1c2732;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e141a; --surface:#151d26; --surface-2:#1b2530; --ink:#e4ebf2; --muted:#93a2b3; --line:#283543;
+  --accent:#53b6d0; --accent-ink:#06222b; --accent-soft:#12313b;
+  --heat:#ff7448; --heat-2:#ffbf5c; --heat-soft:#3a2219;
+  --good:#4dc48a; --good-soft:#123324; --warn:#e3a94a; --warn-soft:#352812;
+  --steel:#6f7d8d; --steel-dark:#a9b5c2; --glass:#1a2a36; --liquid:#ff5560; --grid:#1c2732;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+h1,h2,h3{text-wrap:balance;margin:0}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(1.5rem,3.4vw,2.35rem);line-height:1.15;letter-spacing:-.01em}
+h2{font-family:var(--f-display);font-weight:500;font-size:1.25rem;line-height:1.25}
+h3{font-size:1rem;font-weight:600}
+p{margin:0}
+.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* шапка */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;padding-block:8px 20px}
+.top .lead{display:flex;flex-direction:column;gap:10px;max-width:68ch}
+.top .aim{color:var(--muted)}
+.law{font-family:var(--f-math);font-style:italic;font-size:clamp(1.6rem,3vw,2.4rem);display:flex;align-items:center;gap:.35em;color:var(--accent);white-space:nowrap}
+.law small{display:block;font-family:var(--f-body);font-style:normal;font-size:.75rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.frac{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05;vertical-align:middle}
+.frac>span:first-child{border-bottom:2px solid currentColor;padding:0 .15em}
+@media (max-width:640px){.top{grid-template-columns:1fr}}
+
+/* вкладки */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;display:flex;gap:8px;align-items:center}
+.tab .n{font-family:var(--f-mono);font-size:.75rem;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab[aria-selected="true"] .n{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab:hover{color:var(--ink)}
+
+/* карточки */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px 0}
+.card-b{padding:14px 16px 16px}
+
+/* стенд */
+.lab{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:940px){.lab{grid-template-columns:minmax(0,1fr)}}
+.stage{overflow:hidden}
+.stage svg{display:block;width:100%;height:auto}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 16px;border-top:1px solid var(--line);background:var(--surface-2)}
+.btn{appearance:none;font:inherit;font-weight:600;border-radius:10px;padding:9px 16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .15s,border-color .15s,transform .05s}
+.btn:hover:not(:disabled){border-color:var(--steel)}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn svg{width:14px;height:14px;fill:currentColor}
+.btn.heat{background:var(--heat);border-color:var(--heat);color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn.small{padding:6px 10px;font-size:.875rem;border-radius:8px}
+.timer{font-family:var(--f-mono);font-size:1.05rem;padding:7px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--line);min-width:96px;text-align:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{appearance:none;border:0;background:none;font:inherit;font-size:.85rem;font-weight:600;padding:8px 10px;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink)}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:.82rem;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.chip.heating{background:var(--heat-soft);border-color:transparent;color:var(--heat)}
+.chip.settling{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.chip.settled{background:var(--good-soft);border-color:transparent;color:var(--good)}
+
+/* SVG-элементы стенда */
+.s-card{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.s-bench{fill:var(--surface-2);stroke:var(--line)}
+.s-tick{stroke:var(--ink);stroke-width:1.2}
+.s-tick.minor{stroke:var(--muted);stroke-width:.8}
+.s-num{fill:var(--ink);font-family:var(--f-mono);font-size:11px}
+.s-num.alt{fill:var(--muted)}
+.s-unit{fill:var(--muted);font-family:var(--f-body);font-size:13px;font-weight:600}
+.s-read{fill:var(--liquid);font-family:var(--f-mono);font-size:15px;font-weight:600}
+.s-tube{fill:var(--glass);stroke:var(--steel);stroke-width:1.5}
+.s-liquid{fill:var(--liquid)}
+.s-shine{fill:#fff;opacity:.45}
+.s-bezel{fill:var(--steel);stroke:var(--steel-dark);stroke-width:2}
+.s-face{fill:var(--surface);stroke:var(--line)}
+.s-window{fill:var(--surface-2);stroke:var(--line)}
+.s-gread{fill:var(--ink);font-family:var(--f-mono);font-size:13px;font-weight:600}
+.s-needle{fill:var(--heat)}
+.s-hub{fill:var(--steel-dark)}
+.s-hose{fill:none;stroke:var(--steel-dark);stroke-width:7;stroke-linecap:round}
+.s-hose-in{fill:none;stroke:var(--steel);stroke-width:3;stroke-linecap:round}
+.s-glass{fill:var(--glass);stroke:var(--steel);stroke-width:2;fill-opacity:.85}
+.s-steel{fill:var(--steel);stroke:var(--steel-dark);stroke-width:1.5}
+.s-steel-dark{fill:var(--steel-dark)}
+.s-gas{fill:var(--heat)}
+.s-mol{fill:var(--accent)}
+.s-scale{fill:var(--muted);font-family:var(--f-mono);font-size:10px}
+.s-scale-line{stroke:var(--muted);stroke-width:1}
+.s-leg{stroke:var(--steel-dark);stroke-width:4;stroke-linecap:round;fill:none}
+.s-tag{fill:var(--muted);font-family:var(--f-body);font-size:12px;font-weight:500}
+.s-tag-strong{fill:var(--accent);font-family:var(--f-mono);font-size:12px;font-weight:600}
+.s-lead{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 3}
+.s-glow{fill:var(--heat)}
+#flame{transform-box:fill-box;transform-origin:50% 100%}
+.flicker{transform-box:fill-box;transform-origin:50% 100%;animation:flick .18s ease-in-out infinite alternate}
+.flicker.b{animation-duration:.23s;animation-delay:-.1s}
+@keyframes flick{from{transform:scale(1,1)}to{transform:scale(.94,1.07)}}
+@media (prefers-reduced-motion:reduce){.flicker{animation:none}}
+
+/* пульт */
+.panel{display:flex;flex-direction:column;gap:16px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-size:.82rem;color:var(--muted);font-weight:500}
+.field .in{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);overflow:hidden}
+.field input{appearance:textfield;-moz-appearance:textfield;font:inherit;font-family:var(--f-mono);border:0;background:transparent;color:var(--ink);padding:8px 10px;width:100%;min-width:0}
+.field input::-webkit-inner-spin-button{appearance:none;margin:0}
+.field .u{padding:0 10px;color:var(--muted);font-size:.85rem;white-space:nowrap}
+.field input:disabled{color:var(--muted)}
+.fields .calc{grid-column:1/-1;font-size:.85rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 16px}
+.gases{display:flex;flex-wrap:wrap;gap:6px}
+.gas{position:relative}
+.gas input{position:absolute;opacity:0;pointer-events:none}
+.gas label{display:inline-flex;gap:6px;align-items:baseline;padding:6px 11px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:.9rem;background:var(--surface)}
+.gas label b{font-family:var(--f-mono);font-weight:400;font-size:.78rem;color:var(--muted)}
+.gas input:checked+label{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.gas input:checked+label b{color:inherit;opacity:.8}
+.gas input:focus-visible+label{outline:3px solid var(--accent);outline-offset:2px}
+.gas input:disabled+label{cursor:not-allowed;opacity:.6}
+.lockmsg{font-size:.82rem;color:var(--warn)}
+.readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ro{background:var(--surface-2);border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ro .k{font-size:.78rem;color:var(--muted)}
+.ro .v{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:1.25rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ro .v small{font-size:.75rem;font-weight:400;color:var(--muted);margin-left:4px}
+.ro.wide{grid-column:1/-1;background:var(--accent-soft)}
+.ro.const .v{color:var(--muted);font-size:1rem}
+.record{width:100%;justify-content:center;padding:12px}
+.hint{font-size:.85rem;color:var(--muted)}
+
+/* результаты */
+.results{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:16px}
+.split{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px}
+@media (max-width:940px){.split{grid-template-columns:minmax(0,1fr)}}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:960px}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:.78rem;vertical-align:bottom;background:var(--surface-2)}
+th.grp{text-align:center;color:var(--ink);font-size:.8rem;border-bottom:1px solid var(--line)}
+td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td.l,th.l{text-align:left}
+td.l{font-family:var(--f-body)}
+tr.base td{color:var(--muted)}
+tfoot td{font-weight:600;background:var(--surface-2)}
+.del{appearance:none;border:0;background:none;color:var(--muted);cursor:pointer;font-size:1.1rem;line-height:1;padding:2px 6px;border-radius:6px}
+.del:hover{color:var(--heat);background:var(--heat-soft)}
+.empty{padding:28px 16px;text-align:center;color:var(--muted)}
+.chartbox{position:relative;height:320px}
+.chartbox canvas{display:block;width:100%;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--muted);padding:0 16px 14px}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.verdict{display:flex;flex-direction:column;gap:12px}
+.verdict .big{font-family:var(--f-mono);font-size:1.9rem;font-weight:600;line-height:1.1}
+.verdict .big small{font-size:.9rem;color:var(--muted);font-weight:400}
+.badge{display:inline-block;padding:4px 10px;border-radius:8px;font-size:.85rem;font-weight:600;background:var(--surface-2);color:var(--muted)}
+.badge.ok{background:var(--good-soft);color:var(--good)}
+.badge.bad{background:var(--warn-soft);color:var(--warn)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:20}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* текстовые разделы */
+.prose{max-width:72ch;display:flex;flex-direction:column;gap:14px}
+.prose p,.prose li{line-height:1.65}
+.formula{font-family:var(--f-math);font-style:italic;font-size:1.35rem;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.formula .no{font-family:var(--f-mono);font-style:normal;font-size:.9rem;color:var(--muted)}
+.formula .eq{display:flex;align-items:center;gap:.3em;flex-wrap:wrap}
+.theory{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:940px){.theory{grid-template-columns:minmax(0,1fr)}}
+figure{margin:0;display:flex;flex-direction:column;gap:10px}
+figcaption{font-size:.85rem;color:var(--muted)}
+.scheme{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;font-size:.88rem}
+.scheme .node{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center}
+.scheme .node .f{font-family:var(--f-math);font-style:italic;font-size:1.15rem;color:var(--ink)}
+.scheme .node .n{color:var(--muted);font-size:.8rem}
+.scheme .root{grid-column:span 2}
+.scheme .cond{font-family:var(--f-math);font-style:italic;font-size:1rem;color:var(--muted);text-align:center}
+.scheme .node.hl{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.scheme .node.hl .n{color:var(--ink)}
+.scheme .arrow{text-align:center;color:var(--muted);font-size:.9rem;line-height:1}
+.graphs{overflow-x:auto}
+.graphs table{min-width:520px;font-size:.85rem}
+.graphs td,.graphs th{text-align:center;padding:6px;font-family:var(--f-body);white-space:normal}
+.graphs th{background:var(--surface-2);font-family:var(--f-math);font-style:italic;font-size:1rem;color:var(--ink)}
+.graphs td.rowh{text-align:left;font-size:.85rem;width:120px}
+.graphs td.rowh b{display:block;margin-bottom:4px}
+.graphs td.rowh .f{font-family:var(--f-math);font-style:italic;font-size:1rem}
+.graphs tr.hl td{background:var(--accent-soft)}
+.graphs svg{width:100%;max-width:150px;height:auto;display:block;margin:0 auto}
+.g-axis{stroke:var(--ink);stroke-width:1.3;fill:none}
+.g-arrow{fill:var(--ink)}
+.g-line{stroke:var(--heat);stroke-width:2.4;fill:none}
+.g-dash{stroke:var(--heat);stroke-width:1.4;stroke-dasharray:3 3;fill:none}
+.g-lab{fill:var(--ink);font-family:var(--f-math);font-style:italic;font-size:12px}
+.g-cap{fill:var(--muted);font-family:var(--f-math);font-style:italic;font-size:11px}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;max-width:76ch}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.steps li::before{content:counter(s);font-family:var(--f-mono);font-weight:600;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.kbd{font-family:var(--f-mono);font-size:.8rem;padding:1px 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--surface)}
+.qa{display:flex;flex-direction:column;gap:8px;max-width:80ch;padding:0;margin:0;list-style:none;counter-reset:q}
+.qa li{counter-increment:q}
+.qa details{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.qa summary{cursor:pointer;padding:12px 16px;display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:baseline;list-style:none}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary::before{content:counter(q) ".";font-family:var(--f-mono);color:var(--muted)}
+.qa summary::after{content:"Ответ";font-size:.78rem;font-weight:600;color:var(--accent);border:1px solid var(--accent-soft);padding:2px 8px;border-radius:6px}
+.qa details[open] summary::after{content:"Скрыть"}
+.qa .ans{padding:0 16px 14px 56px;color:var(--muted)}
+.lit{font-size:.92rem;color:var(--muted);padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.section-gap{display:flex;flex-direction:column;gap:28px}
+footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="lead">
+      <span class="eyebrow">Лабораторная работа № 25 · Молекулярная физика</span>
+      <h1>Изучение изохорного процесса в газах</h1>
+      <p class="aim"><b>Цель работы:</b> экспериментально проверить справедливость закона Шарля для изохорного процесса: при постоянном объёме отношение давления газа к его абсолютной температуре остаётся постоянным.</p>
+    </div>
+    <div class="law" aria-label="p делить на T равно const">
+      <div><small>Закон Шарля, V = const</small><span class="frac"><span>p</span><span>T</span></span> = const</div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Разделы работы">
+    <button class="tab" role="tab" id="tab-teoriya" aria-controls="teoriya" data-tab="teoriya"><span class="n">1</span>Теория</button>
+    <button class="tab" role="tab" id="tab-hod" aria-controls="hod" data-tab="hod"><span class="n">2</span>Ход работы</button>
+    <button class="tab" role="tab" id="tab-opyt" aria-controls="opyt" data-tab="opyt"><span class="n">3</span>Опыт</button>
+    <button class="tab" role="tab" id="tab-voprosy" aria-controls="voprosy" data-tab="voprosy"><span class="n">4</span>Вопросы</button>
+  </nav>
+
+  <!-- ===================== ТЕОРИЯ ===================== -->
+  <section id="teoriya" role="tabpanel" aria-labelledby="tab-teoriya" hidden>
+    <div class="theory">
+      <div class="prose">
+        <h2>Краткая теория</h2>
+        <p><b>Закон Шарля</b>, или второй закон Гей-Люссака, один из основных газовых законов. Он описывает, как связаны давление и температура идеального газа при постоянном объёме. Экспериментально эту зависимость установил Жак Шарль в 1787 году, а в 1802 году её уточнил Жозеф Гей-Люссак.</p>
+        <p>Основное уравнение молекулярно-кинетической теории газов можно записать так:</p>
+        <div class="formula"><span class="eq">p = nkT</span><span class="no">(1)</span></div>
+        <p>где <i>p</i> — давление газа на стенки сосуда, <i>n</i> — концентрация молекул, <i>T</i> — абсолютная температура, <i>k</i> = 1,38·10<sup>−23</sup> Дж/К — постоянная Больцмана.</p>
+        <p>Если масса газа и объём сосуда не меняются, концентрация <i>n</i> тоже постоянна. Значит, давление растёт прямо пропорционально абсолютной температуре:</p>
+        <div class="formula"><span class="eq"><span class="frac"><span>p</span><span>T</span></span> = const,&nbsp;&nbsp; <span class="frac"><span>p<sub>1</sub></span><span>T<sub>1</sub></span></span> = <span class="frac"><span>p<sub>2</sub></span><span>T<sub>2</sub></span></span></span><span class="no">(2)</span></div>
+        <p>Если температуру измерять по шкале Цельсия, зависимость давления от температуры имеет вид:</p>
+        <div class="formula"><span class="eq">p = p<sub>0</sub>(1 + βt)</span><span class="no">(3)</span></div>
+        <p>где <i>p</i> — давление газа при температуре <i>t</i>, <i>p</i><sub>0</sub> — давление при 0 °C, β — термический коэффициент давления. Для идеального газа β = 1/273,15 К<sup>−1</sup> ≈ 0,00366 К<sup>−1</sup>.</p>
+        <p>Если продолжить прямую <i>p</i>(<i>T</i>) в область низких температур, она пройдёт через начало координат: давление идеального газа обращается в ноль при <i>T</i> = 0 К (−273,15 °C). Это хорошо видно на графике в разделе «Опыт».</p>
+        <p>Масса газа в сосуде в нашей установке рассчитывается по уравнению Менделеева–Клапейрона: <span style="font-family:var(--f-math);font-style:italic">m = p<sub>0</sub>V<sub>0</sub>M / (RT<sub>0</sub>)</span>, где <i>R</i> = 8,314 Дж/(моль·К), <i>M</i> — молярная масса газа.</p>
+      </div>
+      <div class="section-gap">
+        <figure>
+          <h3>Рис. 1. Уравнения состояния и изопроцессы</h3>
+          <div class="scheme" aria-label="Схема уравнений состояния">
+            <div class="node root"><span class="cond">m = const</span><span class="f">pV / T = const</span><span class="n">уравнение Клапейрона</span></div>
+            <div class="node"><span class="cond">m ≠ const</span><span class="f">pV / T = (m/M)·R</span><span class="n">уравнение Менделеева–Клапейрона</span></div>
+            <div class="arrow">↓</div><div class="arrow">↓</div><div class="arrow">↓</div>
+            <div class="node"><span class="cond">p = const</span><span class="n">изобарный процесс</span><span class="f">V / T = const</span><span class="n">закон Гей-Люссака</span></div>
+            <div class="node hl"><span class="cond">V = const</span><span class="n">изохорный процесс · наш опыт</span><span class="f">p / T = const</span><span class="n">закон Шарля</span></div>
+            <div class="node"><span class="cond">T = const</span><span class="n">изотермический процесс</span><span class="f">pV = const</span><span class="n">закон Бойля–Мариотта</span></div>
+          </div>
+          <figcaption>Три изопроцесса получаются из уравнения Клапейрона, если зафиксировать один из параметров при постоянной массе газа.</figcaption>
+        </figure>
+        <figure>
+          <h3>Рис. 2. Графики изопроцессов</h3>
+          <div class="graphs card"><table id="graphsTable"><thead><tr><th style="font-family:var(--f-body);font-style:normal;font-size:.8rem;color:var(--muted)">процесс</th><th>p(V)</th><th>p(T)</th><th>V(T)</th></tr></thead><tbody></tbody></table></div>
+          <figcaption>Изохора в координатах (p, T) — прямая, выходящая из начала координат. Чем больше объём, тем меньше наклон.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ХОД РАБОТЫ ===================== -->
+  <section id="hod" role="tabpanel" aria-labelledby="tab-hod" hidden>
+    <div class="section-gap">
+      <div class="prose"><h2>Ход работы</h2><p class="muted">Выполняйте шаги по порядку на вкладке «Опыт». Каждое измерение попадает в таблицу автоматически.</p></div>
+      <ol class="steps">
+        <li><div>Установите начальные параметры газа: давление <b>P<sub>0</sub></b>, температуру <b>t<sub>0</sub></b> и объём <b>V<sub>0</sub></b>. Масса газа рассчитается сама.</div></li>
+        <li><div>Выберите газ для исследования: воздух, ацетилен, метан, аргон или углекислый газ.</div></li>
+        <li><div>Нажмите <b>«Пуск»</b>: горелка начнёт нагревать сосуд. Поршень закреплён, поэтому объём газа не меняется.</div></li>
+        <li><div>Когда температура или давление станут кратными (например, 50, 100, 150 °C), остановите нагрев кнопкой <b>«Пауза»</b>. Клавиша <span class="kbd">Пробел</span> делает то же самое.</div></li>
+        <li><div>Подождите, пока индикатор покажет <b>«Показания установились»</b>. Нагретые стенки ещё несколько секунд отдают тепло газу.</div></li>
+        <li><div>Нажмите <b>«Записать измерение»</b>. В таблицу попадут t<sub>i</sub>, T<sub>i</sub>, P<sub>i</sub> и отношение P<sub>i</sub>/T<sub>i</sub>.</div></li>
+        <li><div>Продолжите нагрев кнопкой «Пуск» и повторите измерения 5–6 раз. Убедитесь, что отношения P<sub>i</sub>/T<sub>i</sub> примерно равны.</div></li>
+        <li><div>Оцените абсолютную Δ(P/T) и относительную δ(P/T) погрешности: они рассчитываются в таблице относительно P<sub>0</sub>/T<sub>0</sub>.</div></li>
+        <li><div>Повторите опыт для другого газа или других начальных условий (кнопка «Стоп» возвращает установку в исходное состояние). Сформулируйте вывод.</div></li>
+      </ol>
+      <div class="prose">
+        <h3>Формулы для обработки</h3>
+        <p><span class="mono">T = t + 273,15</span> — перевод в кельвины.</p>
+        <p><span class="mono">Δ(P/T) = |P<sub>i</sub>/T<sub>i</sub> − P<sub>0</sub>/T<sub>0</sub>|</span> — абсолютная погрешность.</p>
+        <p><span class="mono">δ(P/T) = Δ(P/T) / (P<sub>0</sub>/T<sub>0</sub>) · 100 %</span> — относительная погрешность.</p>
+        <p><button class="btn primary" type="button" data-goto="opyt">Перейти к опыту</button></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ОПЫТ ===================== -->
+  <section id="opyt" role="tabpanel" aria-labelledby="tab-opyt" hidden>
+    <div class="lab">
+      <div class="card stage">
+        <svg id="stage" viewBox="0 0 790 470" role="img" aria-label="Установка: термометр, манометр, сосуд постоянного объёма с газом и горелка">
+          <defs>
+            <pattern id="paper" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" style="stroke:var(--grid)" stroke-width="1"/></pattern>
+            <linearGradient id="flameGrad" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color:var(--heat)"/><stop offset="1" style="stop-color:var(--heat-2)"/></linearGradient>
+            <linearGradient id="flameCore" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color:var(--heat-2)"/><stop offset="1" stop-color="#fff6d8"/></linearGradient>
+            <radialGradient id="glowGrad"><stop offset="0" style="stop-color:var(--heat)" stop-opacity=".55"/><stop offset="1" style="stop-color:var(--heat)" stop-opacity="0"/></radialGradient>
+            <clipPath id="gasClip"><rect id="gasClipRect" x="262" y="290" width="40" height="66"/></clipPath>
+          </defs>
+          <rect width="790" height="470" fill="url(#paper)"/>
+          <rect class="s-bench" x="-2" y="440" width="794" height="32"/>
+
+          <!-- термометр -->
+          <g id="thermo">
+            <rect class="s-card" x="34" y="12" width="140" height="430" rx="14"/>
+            <text class="s-unit" x="72" y="36" text-anchor="middle">°F</text>
+            <text class="s-unit" x="136" y="36" text-anchor="middle">°C</text>
+            <g id="thermoTicks"></g>
+            <rect class="s-tube" x="96" y="44" width="16" height="346" rx="8"/>
+            <rect id="liquid" class="s-liquid" x="100" y="300" width="8" height="90"/>
+            <circle class="s-liquid" cx="104" cy="391" r="17"/>
+            <circle class="s-shine" cx="98" cy="385" r="5"/>
+            <text id="thermoRead" class="s-read" x="104" y="430" text-anchor="middle">+20.0 °C</text>
+          </g>
+
+          <!-- манометр -->
+          <path class="s-hose" d="M470 238 C470 268 300 256 300 288"/>
+          <path class="s-hose-in" d="M470 238 C470 268 300 256 300 288"/>
+          <g id="gauge">
+            <rect class="s-steel" x="462" y="226" width="16" height="16" rx="3"/>
+            <circle class="s-bezel" cx="470" cy="122" r="112"/>
+            <circle class="s-face" cx="470" cy="122" r="101"/>
+            <g id="gaugeTicks"></g>
+            <text class="s-unit" x="470" y="164" text-anchor="middle">кПа</text>
+            <rect class="s-window" x="424" y="176" width="92" height="24" rx="5"/>
+            <text id="gaugeRead" class="s-gread" x="470" y="193" text-anchor="middle">100.000</text>
+            <g id="needle"><path class="s-needle" d="M462 117 L554 122 L462 127 Z"/></g>
+            <circle class="s-hub" cx="470" cy="122" r="8"/>
+          </g>
+          <line class="s-lead" x1="586" y1="78" x2="640" y2="60"/>
+          <text class="s-tag" x="646" y="64">Манометр</text>
+
+          <!-- сосуд -->
+          <ellipse id="glow" cx="400" cy="362" rx="80" ry="22" fill="url(#glowGrad)" opacity="0"/>
+          <path class="s-leg" d="M300 360 L282 440 M650 360 L668 440"/>
+          <rect class="s-glass" x="256" y="286" width="440" height="74" rx="12"/>
+          <rect id="gasFill" class="s-gas" x="262" y="290" width="40" height="66" opacity="0"/>
+          <g id="mols" clip-path="url(#gasClip)"></g>
+          <g id="vScale"></g>
+          <rect class="s-steel" x="246" y="280" width="16" height="86" rx="4"/>
+          <rect id="rod" class="s-steel" x="314" y="318" width="440" height="10" rx="3"/>
+          <rect id="piston" class="s-steel-dark" x="302" y="289" width="12" height="68" rx="3"/>
+          <circle class="s-steel" cx="760" cy="323" r="9"/>
+          <rect class="s-steel-dark" x="705" y="300" width="26" height="46" rx="4"/>
+          <rect class="s-steel" x="714" y="292" width="8" height="12" rx="2"/>
+          <path class="s-leg" d="M718 346 L718 440"/>
+          <text class="s-tag-strong" x="718" y="282" text-anchor="middle">V = const</text>
+          <text class="s-tag" x="740" y="376" text-anchor="middle">фиксатор</text>
+          <text class="s-tag" x="740" y="392" text-anchor="middle">поршня</text>
+
+          <!-- горелка -->
+          <g id="burner" transform="translate(400 0)">
+            <g id="flame" opacity="0">
+              <g class="flicker"><path fill="url(#flameGrad)" d="M0 364 C 22 382, 32 398, 22 412 L -22 412 C -32 398, -22 382, 0 364 Z"/></g>
+              <g class="flicker b"><path fill="url(#flameCore)" d="M2 380 C 14 392, 18 402, 12 412 L -12 412 C -18 402, -10 392, 2 380 Z"/></g>
+            </g>
+            <path class="s-steel" d="M-42 410 Q 0 448 42 410 Z"/>
+            <rect class="s-steel-dark" x="-14" y="432" width="28" height="8" rx="2"/>
+            <text class="s-tag" x="50" y="432">горелка</text>
+          </g>
+        </svg>
+        <div class="controls">
+          <button class="btn heat" id="btnStart" type="button"><svg viewBox="0 0 10 10"><path d="M1 0 L9 5 L1 10 Z"/></svg>Пуск</button>
+          <button class="btn" id="btnPause" type="button"><svg viewBox="0 0 10 10"><path d="M1 0h3v10H1zM6 0h3v10H6z"/></svg>Пауза</button>
+          <button class="btn ghost" id="btnStop" type="button"><svg viewBox="0 0 10 10"><path d="M0 0h10v10H0z"/></svg>Стоп</button>
+          <span class="timer" id="timer" aria-label="Время нагрева">0.0 с</span>
+          <div class="seg" role="group" aria-label="Скорость опыта">
+            <button type="button" data-speed="1" aria-pressed="true">×1</button>
+            <button type="button" data-speed="3" aria-pressed="false">×3</button>
+            <button type="button" data-speed="10" aria-pressed="false">×10</button>
+          </div>
+          <span class="spacer"></span>
+          <span class="chip" id="status" role="status">Готово к опыту</span>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <div class="card">
+          <div class="card-h"><h3>Начальные параметры газа</h3></div>
+          <div class="card-b" style="display:flex;flex-direction:column;gap:12px">
+            <div class="fields">
+              <div class="field"><label for="inP0">Давление P<sub>0</sub></label><div class="in"><input id="inP0" type="number" inputmode="decimal" min="50" max="200" step="1" value="100"><span class="u">кПа</span></div></div>
+              <div class="field"><label for="inT0">Температура t<sub>0</sub></label><div class="in"><input id="inT0" type="number" inputmode="decimal" min="-50" max="100" step="1" value="20"><span class="u">°C</span></div></div>
+              <div class="field"><label for="inV0">Объём V<sub>0</sub></label><div class="in"><input id="inV0" type="number" inputmode="decimal" min="0.5" max="5" step="0.1" value="2"><span class="u">л</span></div></div>
+              <div class="field"><label>Температура T<sub>0</sub></label><div class="in"><input id="outT0" type="text" value="293.15" disabled aria-label="Начальная температура в кельвинах"><span class="u">К</span></div></div>
+              <div class="calc"><span>M = <b class="mono" id="outM">0.029</b> кг/моль</span><span>m = <b class="mono" id="outMass">—</b> кг</span></div>
+            </div>
+            <div class="gases" role="radiogroup" aria-label="Газ" id="gases"></div>
+            <p class="lockmsg" id="lockMsg" hidden>Чтобы изменить параметры, нажмите «Стоп».</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>Текущие показания</h3><span class="hint">V и m постоянны</span></div>
+          <div class="card-b" style="display:flex;flex-direction:column;gap:12px">
+            <div class="readouts">
+              <div class="ro"><span class="k">Температура t<sub>i</sub></span><span class="v" id="roT">20.0<small>°C</small></span></div>
+              <div class="ro"><span class="k">Температура T<sub>i</sub></span><span class="v" id="roTK">293.15<small>К</small></span></div>
+              <div class="ro"><span class="k">Давление P<sub>i</sub></span><span class="v" id="roP">100.000<small>кПа</small></span></div>
+              <div class="ro const"><span class="k">Объём V<sub>i</sub></span><span class="v" id="roV">1.0<small>л · const</small></span></div>
+              <div class="ro wide"><span class="k">Отношение P<sub>i</sub> / T<sub>i</sub></span><span class="v" id="roRatio">0.3411<small>кПа/К</small></span></div>
+            </div>
+            <button class="btn primary record" id="btnRecord" type="button">Записать измерение</button>
+            <p class="hint" id="recordHint">Нажмите «Пуск», затем «Пауза» на нужной температуре.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="results">
+      <div class="card">
+        <div class="card-h"><h3>Таблица измерений</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn small" id="btnCopy" type="button">Скопировать для Excel</button>
+            <button class="btn small ghost" id="btnClear" type="button">Очистить</button>
+          </div>
+        </div>
+        <div class="card-b">
+          <div class="tablewrap">
+            <table id="dataTable">
+              <thead>
+                <tr><th rowspan="2" class="l">№</th><th rowspan="2" class="l">Газ</th><th rowspan="2">M,<br>кг/моль</th><th rowspan="2">m,<br>кг</th>
+                  <th colspan="4" class="grp">Начальные показатели</th><th colspan="4" class="grp">Конечные показатели</th>
+                  <th rowspan="2">P<sub>i</sub>/T<sub>i</sub>,<br>кПа/К</th><th rowspan="2">P<sub>0</sub>/T<sub>0</sub>,<br>кПа/К</th><th rowspan="2">Δ(P/T),<br>кПа/К</th><th rowspan="2">δ(P/T),<br>%</th><th rowspan="2"><span class="muted" aria-label="Удалить"></span></th></tr>
+                <tr><th>P<sub>0</sub>, кПа</th><th>V<sub>0</sub>, л</th><th>t<sub>0</sub>, °C</th><th>T<sub>0</sub>, К</th><th>P<sub>i</sub>, кПа</th><th>V<sub>i</sub>, л</th><th>t<sub>i</sub>, °C</th><th>T<sub>i</sub>, К</th></tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+              <tfoot id="tfoot"></tfoot>
+            </table>
+          </div>
+          <div class="empty" id="emptyMsg">Пока нет измерений. Нагрейте газ, нажмите «Пауза» и запишите первую точку.</div>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="card">
+          <div class="card-h"><h3>График зависимости P(T)</h3><span class="hint">V = const</span></div>
+          <div class="card-b" style="padding-bottom:8px"><div class="chartbox"><canvas id="chart" aria-label="График давления от абсолютной температуры"></canvas></div></div>
+          <div class="legend">
+            <span><i style="background:var(--accent)"></i>теоретическая изохора p = (P<sub>0</sub>/T<sub>0</sub>)·T</span>
+            <span><i style="background:var(--ink);height:8px;width:8px;border-radius:50%"></i>ваши измерения</span>
+            <span><i style="background:var(--heat);height:8px;width:8px;border-radius:50%"></i>сейчас</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Вывод</h3></div>
+          <div class="card-b verdict" id="verdict"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ВОПРОСЫ ===================== -->
+  <section id="voprosy" role="tabpanel" aria-labelledby="tab-voprosy" hidden>
+    <div class="section-gap">
+      <div class="prose"><h2>Контрольные вопросы</h2><p class="muted">Сначала ответьте сами, потом откройте краткий ответ для самопроверки.</p></div>
+      <ol class="qa" id="qa"></ol>
+      <div class="prose">
+        <h3>Список литературы</h3>
+        <ol class="lit">
+          <li>Савельев И. В. Курс физики. Т. 1: Механика. Молекулярная физика. — М.: Наука, 1989.</li>
+          <li>Кикоин А. К., Кикоин И. К. Молекулярная физика. — М.: Наука, 1976.</li>
+          <li>Лабораторный практикум по физике / под ред. А. С. Ахматова. — М.: Высшая школа, 1980.</li>
+          <li>Техническое описание экспериментальной установки ФПТ1-8.</li>
+          <li>Практические рекомендации по обработке результатов измерений: методические указания / сост. Л. П. Муркин, Н. В. Мышкина. — Куйбышев: КуАИ, 1992.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Виртуальная лабораторная работа № 25 «Изучение изохорного процесса в газах»</span>
+    <span>Модель: идеальный газ, V = const, R = 8,314 Дж/(моль·К)</span>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent, text){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(text!=null) e.textContent=text; if(parent) parent.appendChild(e); return e; }
+const fmt = (x,d) => Number(x).toFixed(d);
+const R = 8.314;
+
+const GASES = [
+  {id:'air',  name:'Воздух',         f:'',     M:0.029, k:1.00},
+  {id:'c2h2', name:'Ацетилен',       f:'C₂H₂', M:0.026, k:0.85},
+  {id:'ch4',  name:'Метан',          f:'CH₄',  M:0.016, k:0.80},
+  {id:'ar',   name:'Аргон',          f:'Ar',   M:0.040, k:1.45},
+  {id:'co2',  name:'Углекислый газ', f:'CO₂',  M:0.044, k:0.80},
+];
+const T_MIN=-50, T_MAX=600, P_MAX=1000;
+const RATE=3.0;            // К/с скорость нагрева стенок (для воздуха)
+const TAU=1.2;             // с, тепловая инерция газа
+const TW_MAX=T_MAX+273.15-0.6;
+
+const st = { gasId:'air', P0:100, t0:20, V0:2, running:false, T:293.15, Tw:293.15, time:0, speed:1, limit:false, rows:[], lastRecTw:null };
+const ph1=Math.random()*6.28, ph2=Math.random()*6.28;
+
+const gas = () => GASES.find(g=>g.id===st.gasId);
+const T0 = () => st.t0+273.15;
+const mass = () => st.P0*1e3 * st.V0*1e-3 * gas().M / (R*T0());
+
+function readings(){
+  const d = st.T - T0();
+  const eT = 0.25*(Math.sin(d/23+ph1)-Math.sin(ph1));
+  const eP = 0.0028*(Math.sin(d/41+ph2)-Math.sin(ph2));
+  const t = Math.round((st.T+eT-273.15)*10)/10;
+  const P = Math.round(st.P0*st.T/T0()*(1+eP)*1000)/1000;
+  return { t, T: Math.round((t+273.15)*100)/100, P };
+}
+function status(){
+  if(st.running) return 'heating';
+  if(st.time===0) return 'idle';
+  return Math.abs(st.Tw-st.T)<0.03 ? 'settled' : 'settling';
+}
+
+/* ---------- сохранение таблицы ---------- */
+const KEY='izohor-lab25-rows';
+try{ const s=JSON.parse(localStorage.getItem(KEY)||'[]'); if(Array.isArray(s)) st.rows=s; }catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(st.rows)); }catch(e){} }
+
+/* ---------- вкладки ---------- */
+const tabs=[...document.querySelectorAll('.tab')];
+function openTab(id){
+  tabs.forEach(t=>{ const on=t.dataset.tab===id; t.setAttribute('aria-selected',on); t.tabIndex=on?0:-1; document.getElementById(t.dataset.tab).hidden=!on; });
+  if(id==='opyt') resizeChart();
+}
+tabs.forEach((t,i)=>{
+  t.addEventListener('click',()=>{ openTab(t.dataset.tab); try{history.replaceState(null,'','#'+t.dataset.tab);}catch(e){} });
+  t.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowLeft'){ const n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length]; n.focus(); n.click(); } });
+});
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>{ openTab(b.dataset.goto); window.scrollTo({top:0,behavior:'smooth'}); }));
+
+/* ---------- термометр ---------- */
+const yOfT = t => 366 - (Math.max(T_MIN,Math.min(T_MAX,t))-T_MIN)/(T_MAX-T_MIN)*310;
+(function(){
+  const g=$('#thermoTicks');
+  for(let t=T_MIN;t<=T_MAX;t+=10){
+    const y=yOfT(t), major=(t%50===0);
+    el('line',{x1:112,x2:major?122:117,y1:y,y2:y,class:'s-tick'+(major?'':' minor')},g);
+    el('line',{x1:major?86:91,x2:96,y1:y,y2:y,class:'s-tick'+(major?'':' minor')},g);
+    if(major){
+      el('text',{x:126,y:y+4,class:'s-num'},g,String(t));
+      el('text',{x:82,y:y+4,class:'s-num alt','text-anchor':'end'},g,String(Math.round(t*1.8+32)));
+    }
+  }
+})();
+
+/* ---------- манометр ---------- */
+const CX=470, CY=122;
+const angOf = p => 135 + Math.max(0,Math.min(P_MAX,p))/P_MAX*270;
+(function(){
+  const g=$('#gaugeTicks');
+  for(let p=0;p<=P_MAX;p+=20){
+    const a=angOf(p)*Math.PI/180, major=p%100===0, r1=major?85:92;
+    el('line',{x1:CX+r1*Math.cos(a),y1:CY+r1*Math.sin(a),x2:CX+99*Math.cos(a),y2:CY+99*Math.sin(a),class:'s-tick'+(major?'':' minor')},g);
+    if(major) el('text',{x:CX+71*Math.cos(a),y:CY+71*Math.sin(a)+4,class:'s-num','text-anchor':'middle'},g,String(p));
+  }
+})();
+
+/* ---------- сосуд ---------- */
+const X0=268, XL=400/6;           // 0 л на x=268, 6 л на x=668
+const xOfV = v => X0 + v*XL;
+(function(){
+  const g=$('#vScale');
+  for(let v=0.5; v<=6.001; v+=0.5){
+    const x=xOfV(v), whole=Math.abs(v-Math.round(v))<1e-6;
+    el('line',{x1:x,x2:x,y1:whole?344:350,y2:357,class:'s-scale-line'},g);
+    if(whole) el('text',{x:x,y:339,class:'s-scale','text-anchor':'middle'},g, v===6?'6 л':String(v));
+  }
+})();
+const N_MOL=42, mols=[];
+const molG=$('#mols');
+for(let i=0;i<N_MOL;i++){
+  const a=Math.random()*Math.PI*2;
+  mols.push({x:Math.random(), y:Math.random(), dx:Math.cos(a), dy:Math.sin(a), node:el('circle',{r:3.4,class:'s-mol'},molG)});
+}
+let px=xOfV(st.V0);
+function layoutVessel(){
+  px = xOfV(st.V0);
+  $('#gasClipRect').setAttribute('width', px-262);
+  $('#gasFill').setAttribute('width', px-262);
+  $('#piston').setAttribute('x', px);
+  $('#rod').setAttribute('x', px+12);
+  $('#rod').setAttribute('width', 752-px-12);
+  const bx = Math.max(300, Math.min(620, (X0+px)/2));
+  $('#burner').setAttribute('transform', `translate(${bx} 0)`);
+  $('#glow').setAttribute('cx', bx);
+}
+
+/* ---------- выбор газа ---------- */
+const gasBox=$('#gases');
+GASES.forEach(g=>{
+  const w=document.createElement('span'); w.className='gas';
+  w.innerHTML=`<input type="radio" name="gas" id="gas-${g.id}" value="${g.id}" ${g.id===st.gasId?'checked':''}><label for="gas-${g.id}">${g.name}${g.f?` <b>${g.f}</b>`:''}</label>`;
+  gasBox.appendChild(w);
+});
+gasBox.addEventListener('change',e=>{ st.gasId=e.target.value; resetState(); });
+
+/* ---------- ввод параметров ---------- */
+const inputs={P0:$('#inP0'), t0:$('#inT0'), V0:$('#inV0')};
+for(const k in inputs){
+  inputs[k].addEventListener('change',()=>{
+    const i=inputs[k]; let v=parseFloat(String(i.value).replace(',','.'));
+    if(!isFinite(v)) v=st[k];
+    v=Math.max(+i.min,Math.min(+i.max,v));
+    if(k==='V0') v=Math.round(v*10)/10;
+    st[k]=v; i.value=v; resetState();
+  });
+}
+function lockInputs(lock){
+  Object.values(inputs).forEach(i=>i.disabled=lock);
+  gasBox.querySelectorAll('input').forEach(i=>i.disabled=lock);
+  $('#lockMsg').hidden=!lock;
+}
+function resetState(){
+  st.running=false; st.time=0; st.limit=false; st.T=st.Tw=T0(); st.lastRecTw=null;
+  $('#outT0').value=fmt(T0(),2);
+  $('#outM').textContent=fmt(gas().M,3);
+  $('#outMass').textContent=mass().toExponential(3).replace('e-','·10⁻').replace(/⁻(\d)/,(m,d)=>'⁻'+'⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+  layoutVessel(); lockInputs(false); drawChart(true);
+}
+
+/* ---------- управление ---------- */
+function start(){ if(st.Tw>=TW_MAX){ toast('Достигнут предел шкалы термометра 600 °C. Нажмите «Стоп».'); return; } st.running=true; st.limit=false; lockInputs(true); }
+function pause(){ st.running=false; }
+function stop(){ resetState(); }
+$('#btnStart').addEventListener('click',start);
+$('#btnPause').addEventListener('click',pause);
+$('#btnStop').addEventListener('click',stop);
+document.querySelectorAll('[data-speed]').forEach(b=>b.addEventListener('click',()=>{
+  st.speed=+b.dataset.speed; document.querySelectorAll('[data-speed]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+}));
+document.addEventListener('keydown',e=>{
+  if(e.code!=='Space' || $('#opyt').hidden) return;
+  const tg=e.target.tagName; if(tg==='INPUT'||tg==='BUTTON'||tg==='TEXTAREA'||tg==='SUMMARY') return;
+  e.preventDefault(); st.running?pause():start();
+});
+
+/* ---------- запись измерений ---------- */
+$('#btnRecord').addEventListener('click',()=>{
+  if(status()!=='settled' || st.lastRecTw===st.Tw) return;
+  const r=readings(), g=gas();
+  st.rows.push({gas:g.name, M:g.M, m:mass(), P0:st.P0, V0:st.V0, t0:st.t0, T0:T0(), t:r.t, T:r.T, P:r.P});
+  st.lastRecTw=st.Tw; save(); renderTable(); drawChart(true);
+  toast(`Записано: t = ${fmt(r.t,1)} °C, P = ${fmt(r.P,3)} кПа`);
+});
+$('#btnClear').addEventListener('click',function(){
+  if(!st.rows.length) return;
+  if(this.dataset.confirm!=='1'){ this.dataset.confirm='1'; this.textContent='Точно очистить?'; setTimeout(()=>{ this.dataset.confirm=''; this.textContent='Очистить'; },3000); return; }
+  this.dataset.confirm=''; this.textContent='Очистить';
+  st.rows=[]; st.lastRecTw=null; save(); renderTable(); drawChart(true);
+});
+$('#tbody').addEventListener('click',e=>{
+  const b=e.target.closest('.del'); if(!b) return;
+  st.rows.splice(+b.dataset.i,1); st.lastRecTw=null; save(); renderTable(); drawChart(true);
+});
+$('#btnCopy').addEventListener('click',()=>{
+  if(!st.rows.length){ toast('Таблица пока пустая'); return; }
+  const head=['№','Газ','M, кг/моль','m, кг','P0, кПа','V0, л','t0, °C','T0, К','Pi, кПа','Vi, л','ti, °C','Ti, К','Pi/Ti, кПа/К','P0/T0, кПа/К','Δ(P/T), кПа/К','δ(P/T), %'];
+  const lines=[head.join('\t')].concat(st.rows.map((r,i)=>{ const c=calc(r); return [i+1,r.gas,r.M,r.m.toExponential(4),r.P0,r.V0,r.t0,fmt(r.T0,2),fmt(r.P,3),r.V0,fmt(r.t,1),fmt(r.T,2),fmt(c.ratio,4),fmt(c.r0,4),fmt(c.abs,4),fmt(c.rel,2)].join('\t').replace(/\./g,','); }));
+  const text=lines.join('\n');
+  const fallback=()=>{ const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok=document.execCommand('copy'); }catch(e){} ta.remove(); toast(ok?'Таблица скопирована. Вставьте её в Excel или Word.':'Не удалось скопировать. Выделите таблицу вручную.'); };
+  try{ navigator.clipboard.writeText(text).then(()=>toast('Таблица скопирована. Вставьте её в Excel или Word.'),fallback); }catch(e){ fallback(); }
+});
+
+function calc(r){ const ratio=r.P/r.T, r0=r.P0/r.T0, abs=Math.abs(ratio-r0); return {ratio,r0,abs,rel:abs/r0*100}; }
+
+function renderTable(){
+  const tb=$('#tbody'), tf=$('#tfoot');
+  $('#emptyMsg').hidden=st.rows.length>0;
+  $('#dataTable').style.display=st.rows.length?'':'none';
+  tb.innerHTML=st.rows.map((r,i)=>{ const c=calc(r); return `<tr>
+    <td class="l">${i+1}</td><td class="l">${r.gas}</td><td>${fmt(r.M,3)}</td><td>${r.m.toExponential(3)}</td>
+    <td>${fmt(r.P0,0)}</td><td>${fmt(r.V0,1)}</td><td>${fmt(r.t0,0)}</td><td>${fmt(r.T0,2)}</td>
+    <td>${fmt(r.P,3)}</td><td>${fmt(r.V0,1)}</td><td>${fmt(r.t,1)}</td><td>${fmt(r.T,2)}</td>
+    <td><b>${fmt(c.ratio,4)}</b></td><td>${fmt(c.r0,4)}</td><td>${fmt(c.abs,4)}</td><td>${fmt(c.rel,2)}</td>
+    <td><button class="del" type="button" data-i="${i}" aria-label="Удалить измерение ${i+1}" title="Удалить">×</button></td></tr>`; }).join('');
+  if(st.rows.length){
+    const cs=st.rows.map(calc), n=cs.length;
+    const mRatio=cs.reduce((s,c)=>s+c.ratio,0)/n, mAbs=cs.reduce((s,c)=>s+c.abs,0)/n, mRel=cs.reduce((s,c)=>s+c.rel,0)/n;
+    tf.innerHTML=`<tr><td class="l" colspan="12">Среднее по ${n} ${plural(n,'измерению','измерениям','измерениям')}</td><td>${fmt(mRatio,4)}</td><td></td><td>${fmt(mAbs,4)}</td><td>${fmt(mRel,2)}</td><td></td></tr>`;
+  } else tf.innerHTML='';
+  renderVerdict();
+}
+function plural(n,a,b,c){ const m10=n%10,m100=n%100; if(m10===1&&m100!==11) return a; if(m10>=2&&m10<=4&&(m100<10||m100>=20)) return b; return c; }
+
+function renderVerdict(){
+  const v=$('#verdict');
+  if(st.rows.length<2){
+    v.innerHTML=`<span class="badge">Нужно минимум 2 измерения</span><p class="muted">Запишите несколько точек при разных температурах. Здесь появится среднее отношение P/T, погрешность и готовая формулировка вывода.</p><p class="muted">Совет: останавливайте нагрев на 50, 100, 150, 200 °C — так удобнее сравнивать результаты.</p>`;
+    return;
+  }
+  const cs=st.rows.map(calc), n=cs.length;
+  const mean=cs.reduce((s,c)=>s+c.ratio,0)/n, mRel=cs.reduce((s,c)=>s+c.rel,0)/n, maxRel=Math.max(...cs.map(c=>c.rel));
+  const sd=Math.sqrt(cs.reduce((s,c)=>s+(c.ratio-mean)**2,0)/(n-1));
+  const ok=maxRel<2;
+  const gasesUsed=[...new Set(st.rows.map(r=>r.gas.toLowerCase()))].join(', ');
+  const tmin=Math.min(...st.rows.map(r=>r.t)), tmax=Math.max(...st.rows.map(r=>r.t));
+  v.innerHTML=`<div><span class="muted" style="font-size:.85rem">Среднее P<sub>i</sub>/T<sub>i</sub></span><div class="big">${fmt(mean,4)} <small>кПа/К</small></div></div>
+    <div class="stats">
+      <div class="ro"><span class="k">средняя δ(P/T)</span><span class="v">${fmt(mRel,2)}<small>%</small></span></div>
+      <div class="ro"><span class="k">наибольшая δ(P/T)</span><span class="v">${fmt(maxRel,2)}<small>%</small></span></div>
+    </div>
+    <span class="badge ${ok?'ok':'bad'}">${ok?'Закон Шарля подтверждается':'Есть заметные отклонения'}</span>
+    <p>При нагревании газа (${gasesUsed}) в сосуде постоянного объёма от ${fmt(tmin,1)} до ${fmt(tmax,1)} °C давление росло, а отношение P/T оставалось почти постоянным: ${fmt(mean,4)} ± ${fmt(sd,4)} кПа/К. Средняя относительная погрешность ${fmt(mRel,2)} %${ok?', поэтому в пределах погрешности измерений закон Шарля <i>p/T = const</i> выполняется.':'. Проверьте, что вы записывали показания только после их установления.'}</p>`;
+}
+
+/* ---------- график ---------- */
+const cv=$('#chart'), ctx=cv.getContext('2d');
+let cssW=0, cssH=0, lastDraw=0;
+function resizeChart(){
+  const box=cv.parentElement; const dpr=window.devicePixelRatio||1;
+  cssW=box.clientWidth; cssH=box.clientHeight; if(!cssW) return;
+  cv.width=Math.round(cssW*dpr); cv.height=Math.round(cssH*dpr); ctx.setTransform(dpr,0,0,dpr,0,0); drawChart(true);
+}
+window.addEventListener('resize',resizeChart);
+function nice(max){ const raw=max/5, p=Math.pow(10,Math.floor(Math.log10(raw))), f=raw/p; const s=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p; return {step:s, max:Math.ceil(max/s)*s}; }
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function drawChart(force){
+  const now=performance.now(); if(!force && now-lastDraw<60) return; lastDraw=now;
+  if(!cssW || $('#opyt').hidden) return;
+  const C={ink:cssVar('--ink'),muted:cssVar('--muted'),grid:cssVar('--grid'),line:cssVar('--line'),accent:cssVar('--accent'),heat:cssVar('--heat'),surface:cssVar('--surface'),steel:cssVar('--steel')};
+  const r=readings();
+  const Ts=[T0(), r.T, ...st.rows.map(x=>x.T)], Ps=[st.P0, r.P, ...st.rows.map(x=>x.P)];
+  const xs=nice(Math.max(400, ...Ts)*1.08), ys=nice(Math.max(...Ps)*1.12);
+  const L=52, Rm=14, Tm=14, B=40, W=cssW-L-Rm, H=cssH-Tm-B;
+  const X=T=>L+T/xs.max*W, Y=P=>Tm+H-P/ys.max*H;
+  ctx.clearRect(0,0,cssW,cssH);
+  ctx.font='11px "JetBrains Mono", Consolas, monospace'; ctx.lineWidth=1;
+  // сетка
+  ctx.strokeStyle=C.grid; ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.textBaseline='top';
+  for(let x=0;x<=xs.max+1e-9;x+=xs.step){ ctx.beginPath(); ctx.moveTo(X(x),Tm); ctx.lineTo(X(x),Tm+H); ctx.stroke(); ctx.fillText(String(Math.round(x)),X(x),Tm+H+6); }
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+  for(let y=0;y<=ys.max+1e-9;y+=ys.step){ ctx.beginPath(); ctx.moveTo(L,Y(y)); ctx.lineTo(L+W,Y(y)); ctx.stroke(); ctx.fillText(String(+y.toFixed(1)),L-6,Y(y)); }
+  // оси
+  ctx.strokeStyle=C.ink; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(L,Tm); ctx.lineTo(L,Tm+H); ctx.lineTo(L+W,Tm+H); ctx.stroke();
+  ctx.fillStyle=C.muted; ctx.font='12px "Golos Text", system-ui, sans-serif'; ctx.textAlign='right'; ctx.textBaseline='bottom';
+  ctx.fillText('T, К', L+W, Tm+H+34);
+  ctx.save(); ctx.translate(14,Tm+H/2); ctx.rotate(-Math.PI/2); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('P, кПа',0,0); ctx.restore();
+  // изохоры прошлых серий
+  const series=new Map(); st.rows.forEach(rw=>{ const k=fmt(rw.P0/rw.T0,6); if(!series.has(k)) series.set(k,rw.P0/rw.T0); });
+  const k0=st.P0/T0();
+  series.forEach(k=>{ if(Math.abs(k-k0)<1e-9) return; ctx.strokeStyle=C.steel; ctx.setLineDash([2,4]); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(X(0),Y(0)); const xe=Math.min(xs.max, ys.max/k); ctx.lineTo(X(xe),Y(k*xe)); ctx.stroke(); });
+  // теоретическая изохора: пунктир до T0, сплошная после
+  const xe=Math.min(xs.max, ys.max/k0);
+  ctx.strokeStyle=C.accent; ctx.lineWidth=2; ctx.setLineDash([5,5]); ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(T0()),Y(st.P0)); ctx.stroke();
+  ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(X(T0()),Y(st.P0)); ctx.lineTo(X(xe),Y(k0*xe)); ctx.stroke();
+  ctx.fillStyle=C.muted; ctx.textAlign='left'; ctx.textBaseline='bottom'; ctx.font='11px "Golos Text", system-ui, sans-serif';
+  ctx.fillText('0 К — абсолютный нуль', L+6, Tm+H-4);
+  // начальная точка
+  ctx.fillStyle=C.surface; ctx.strokeStyle=C.accent; ctx.lineWidth=2; ctx.beginPath(); ctx.rect(X(T0())-4,Y(st.P0)-4,8,8); ctx.fill(); ctx.stroke();
+  // измерения
+  st.rows.forEach(rw=>{ const cur=Math.abs(rw.P0/rw.T0-k0)<1e-9; ctx.fillStyle=cur?C.ink:C.steel; ctx.beginPath(); ctx.arc(X(rw.T),Y(rw.P),4.5,0,Math.PI*2); ctx.fill(); });
+  // текущее состояние
+  ctx.strokeStyle=C.heat; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(X(r.T),Y(r.P),6.5,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle=C.heat; ctx.beginPath(); ctx.arc(X(r.T),Y(r.P),2.5,0,Math.PI*2); ctx.fill();
+}
+
+/* ---------- toast ---------- */
+let toastT; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),2600); }
+
+/* ---------- цикл ---------- */
+let last=performance.now(), flame=0;
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const STATUS_TEXT={idle:'Готово к опыту',heating:'Идёт нагрев',settling:'Показания устанавливаются…',settled:'Показания установились'};
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  const sdt=dt*st.speed;
+  if(st.running){
+    st.Tw=Math.min(TW_MAX, st.Tw+RATE*gas().k*sdt); st.time+=sdt;
+    if(st.Tw>=TW_MAX){ st.running=false; st.limit=true; toast('Достигнут предел шкалы термометра. Нагрев остановлен.'); }
+  }
+  st.T += (st.Tw-st.T)*(1-Math.exp(-sdt/TAU));
+  if(!st.running && Math.abs(st.Tw-st.T)<0.03) st.T=st.Tw;
+  flame += ((st.running?1:0)-flame)*Math.min(1,dt*5);
+  render(dt);
+  requestAnimationFrame(frame);
+}
+let prevStatus='';
+function render(dt){
+  const r=readings(), s=status();
+  // приборы
+  const y=yOfT(r.t); const liq=$('#liquid'); liq.setAttribute('y',y); liq.setAttribute('height',Math.max(0,392-y));
+  $('#thermoRead').textContent=(r.t>=0?'+':'')+fmt(r.t,1)+' °C';
+  $('#needle').setAttribute('transform',`rotate(${angOf(r.P)} ${CX} ${CY})`);
+  $('#gaugeRead').textContent=fmt(r.P,3);
+  const heat=Math.max(0,Math.min(1,(st.T-T0())/500));
+  $('#gasFill').setAttribute('opacity',(0.04+heat*0.32).toFixed(3));
+  $('#flame').setAttribute('opacity',flame.toFixed(3));
+  $('#flame').style.transform=`scale(${(0.3+0.7*flame).toFixed(3)})`;
+  $('#glow').setAttribute('opacity',(flame*0.9).toFixed(3));
+  // молекулы: скорость ~ sqrt(T/M)
+  const v=(reduce?20:55)*Math.sqrt((st.T/293)*(0.029/gas().M));
+  const x1=264+4, x2=px-4, y1=292+4, y2=354-4, w=x2-x1, hgt=y2-y1;
+  for(const m of mols){
+    m.x+=m.dx*v*dt/w; m.y+=m.dy*v*dt/hgt;
+    if(m.x<0){m.x=-m.x;m.dx=Math.abs(m.dx);} if(m.x>1){m.x=2-m.x;m.dx=-Math.abs(m.dx);}
+    if(m.y<0){m.y=-m.y;m.dy=Math.abs(m.dy);} if(m.y>1){m.y=2-m.y;m.dy=-Math.abs(m.dy);}
+    m.node.setAttribute('cx',(x1+m.x*w).toFixed(1)); m.node.setAttribute('cy',(y1+m.y*hgt).toFixed(1));
+  }
+  // панель
+  $('#roT').innerHTML=fmt(r.t,1)+'<small>°C</small>';
+  $('#roTK').innerHTML=fmt(r.T,2)+'<small>К</small>';
+  $('#roP').innerHTML=fmt(r.P,3)+'<small>кПа</small>';
+  $('#roV').innerHTML=fmt(st.V0,1)+'<small>л · const</small>';
+  $('#roRatio').innerHTML=fmt(r.P/r.T,4)+'<small>кПа/К</small>';
+  $('#timer').textContent=fmt(st.time,1)+' с';
+  if(s!==prevStatus || true){
+    const chip=$('#status'); chip.className='chip '+s; chip.textContent=st.limit&&!st.running?'Предел шкалы · нажмите «Стоп»':STATUS_TEXT[s];
+    prevStatus=s;
+  }
+  $('#btnStart').disabled=st.running||st.limit;
+  $('#btnPause').disabled=!st.running;
+  $('#btnStop').disabled=st.time===0&&!st.running;
+  const rec=$('#btnRecord'), hint=$('#recordHint');
+  const already = s==='settled' && st.lastRecTw===st.Tw;
+  rec.disabled = s!=='settled' || already;
+  hint.textContent = s==='idle' ? 'Нажмите «Пуск», затем «Пауза» на нужной температуре.'
+    : s==='heating' ? 'Остановите нагрев кнопкой «Пауза», чтобы снять показания.'
+    : s==='settling' ? 'Подождите: газ ещё прогревается от стенок сосуда.'
+    : already ? 'Эта точка уже записана. Продолжите нагрев кнопкой «Пуск».'
+    : 'Можно записывать: показания установились.';
+  drawChart(false);
+}
+
+/* ---------- графики изопроцессов (теория) ---------- */
+(function(){
+  const rows=[
+    {name:'изобарный', f:'p = const,<br>V / T = const', cells:[
+      {x:'V',y:'p',items:[{k:'h',v:.7,l:'p₂'},{k:'h',v:.38,l:'p₁'}],cap:'p₁ < p₂'},
+      {x:'T',y:'p',items:[{k:'h',v:.7,l:'p₂'},{k:'h',v:.38,l:'p₁'}],cap:'p₁ < p₂'},
+      {x:'T',y:'V',items:[{k:'l',v:.9,l:'p₁'},{k:'l',v:.5,l:'p₂'}],cap:'p₁ < p₂'}]},
+    {name:'изохорный', hl:true, f:'V = const,<br>p / T = const', cells:[
+      {x:'V',y:'p',items:[{k:'v',v:.35,l:'V₁'},{k:'v',v:.7,l:'V₂'}],cap:'V₁ < V₂'},
+      {x:'T',y:'p',items:[{k:'l',v:.9,l:'V₁'},{k:'l',v:.5,l:'V₂'}],cap:'V₁ < V₂'},
+      {x:'T',y:'V',items:[{k:'h',v:.7,l:'V₂'},{k:'h',v:.38,l:'V₁'}],cap:'V₁ < V₂'}]},
+    {name:'изотермический', f:'T = const,<br>pV = const', cells:[
+      {x:'V',y:'p',items:[{k:'c',v:.12,l:'T₁'},{k:'c',v:.26,l:'T₂'}],cap:'T₁ < T₂'},
+      {x:'T',y:'p',items:[{k:'v',v:.35,l:'T₁'},{k:'v',v:.7,l:'T₂'}],cap:'T₁ < T₂'},
+      {x:'T',y:'V',items:[{k:'v',v:.35,l:'T₁'},{k:'v',v:.7,l:'T₂'}],cap:'T₁ < T₂'}]},
+  ];
+  const ox=20, oy=96, W=118, H=82;
+  const X=f=>ox+f*W, Y=f=>oy-f*H;
+  function svg(c){
+    const s=document.createElementNS(NS,'svg'); s.setAttribute('viewBox','0 0 150 124'); s.setAttribute('aria-hidden','true');
+    el('path',{d:`M${ox} ${oy} H${ox+W+6} M${ox} ${oy} V${oy-H-6}`,class:'g-axis'},s);
+    el('path',{d:`M${ox+W+10} ${oy} l-7 -3 v6 Z`,class:'g-arrow'},s);
+    el('path',{d:`M${ox} ${oy-H-10} l-3 7 h6 Z`,class:'g-arrow'},s);
+    el('text',{x:ox-10,y:oy-H+2,class:'g-lab'},s,c.y);
+    el('text',{x:ox+W+2,y:oy+14,class:'g-lab'},s,c.x);
+    el('text',{x:ox-11,y:oy+12,class:'g-lab'},s,'0');
+    c.items.forEach(it=>{
+      if(it.k==='h'){ el('path',{d:`M${X(.15)} ${Y(it.v)} H${X(.9)}`,class:'g-line'},s); el('text',{x:X(.5),y:Y(it.v)-5,class:'g-lab','text-anchor':'middle'},s,it.l); }
+      if(it.k==='v'){ el('path',{d:`M${X(it.v)} ${Y(.85)} V${Y(.18)}`,class:'g-line'},s); el('path',{d:`M${X(it.v)} ${Y(.18)} V${Y(0)}`,class:'g-dash'},s); el('text',{x:X(it.v)-5,y:Y(.55),class:'g-lab','text-anchor':'end'},s,it.l); }
+      if(it.k==='l'){ const a=.25; el('path',{d:`M${X(0)} ${Y(0)} L${X(a)} ${Y(a*it.v)}`,class:'g-dash'},s); el('path',{d:`M${X(a)} ${Y(a*it.v)} L${X(.92)} ${Y(.92*it.v)}`,class:'g-line'},s); el('text',{x:X(.62)-4,y:Y(.62*it.v)-6,class:'g-lab','text-anchor':'end'},s,it.l); }
+      if(it.k==='c'){ let d=''; for(let f=.12; f<=.95; f+=.02){ const yy=Math.min(.95,it.v/f); d+=(d?'L':'M')+X(f).toFixed(1)+' '+Y(yy).toFixed(1); } el('path',{d,class:'g-line'},s); const lf=.55; el('text',{x:X(lf)+2,y:Y(it.v/lf)-5,class:'g-lab'},s,it.l); }
+    });
+    el('text',{x:ox+W/2+4,y:121,class:'g-cap','text-anchor':'middle'},s,c.cap);
+    return s;
+  }
+  const tb=document.querySelector('#graphsTable tbody');
+  rows.forEach(r=>{
+    const tr=document.createElement('tr'); if(r.hl) tr.className='hl';
+    const th=document.createElement('td'); th.className='rowh'; th.innerHTML=`<b>${r.name}</b><span class="f">${r.f}</span>`; tr.appendChild(th);
+    r.cells.forEach(c=>{ const td=document.createElement('td'); td.appendChild(svg(c)); tr.appendChild(td); });
+    tb.appendChild(tr);
+  });
+})();
+
+/* ---------- вопросы ---------- */
+const QA=[
+  ['Перечислите параметры, которыми описывается состояние идеального газа.','Давление p, объём V и абсолютная температура T (а также масса m или количество вещества ν). Они связаны уравнением Менделеева–Клапейрона pV = (m/M)RT.'],
+  ['Дайте определение концентрации молекул.','Концентрация n — число молекул в единице объёма: n = N / V. Единица измерения — м⁻³.'],
+  ['Запишите основное уравнение молекулярно-кинетической теории.','p = ⅓·m₀·n·⟨v²⟩ = ⅔·n·⟨E⟩, или в другой форме p = nkT.'],
+  ['Можно ли сказать, что температура имеет статистический характер? Почему?','Да. Температура — мера средней кинетической энергии хаотического движения молекул: ⟨E⟩ = 3/2·kT. Она имеет смысл только для системы из очень большого числа частиц; о температуре одной молекулы говорить нельзя.'],
+  ['Дайте определение изопроцесса. Перечислите их.','Изопроцесс — процесс, при котором масса газа и один из его параметров остаются постоянными. Изотермический (T = const), изобарный (p = const), изохорный (V = const).'],
+  ['Расскажите о газовых законах.','Закон Бойля–Мариотта: pV = const при T = const. Закон Гей-Люссака: V/T = const при p = const. Закон Шарля: p/T = const при V = const. Все три следуют из уравнения Клапейрона pV/T = const для постоянной массы газа.'],
+  ['Изобразите графики газовых законов в координатах (P,V), (P,T), (V,T).','Сравните свой рисунок с рис. 2 на вкладке «Теория». Изохора в координатах (P,T) — прямая через начало координат, в (P,V) — вертикальная прямая, в (V,T) — горизонтальная.'],
+  ['Какой физический смысл имеет постоянная Больцмана?','k = 1,38·10⁻²³ Дж/К связывает температуру со средней энергией молекул: показывает, на сколько джоулей меняется энергия молекулы при изменении температуры на 1 К. k = R / N<sub>A</sub>.'],
+  ['Назовите единицу измерения термического коэффициента давления.','К⁻¹ (или °C⁻¹, что то же самое).'],
+  ['Каков физический смысл термического коэффициента давления?','β показывает, на какую долю от давления при 0 °C изменяется давление газа при нагревании на 1 К при постоянном объёме. Для идеального газа β = 1/273,15 К⁻¹ ≈ 0,00366 К⁻¹.'],
+  ['Опишите установку данной лабораторной работы. Из чего она состоит? Какова цель того или иного прибора?','Сосуд с газом, объём которого задаётся поршнем и не меняется (поршень закреплён фиксатором). Горелка нагревает газ. Термометр измеряет температуру газа, манометр — давление. Таймер позволяет следить за временем нагрева.'],
+  ['В каком году впервые установили этот закон? Кем он был установлен?','В 1787 году французский физик Жак Шарль. В 1802 году закон уточнил Жозеф Луи Гей-Люссак.'],
+  ['Запишите основные приборы и оборудование, необходимые для проведения данной работы.','Сосуд постоянного объёма с исследуемым газом, нагреватель (горелка), термометр, манометр, секундомер.'],
+];
+$('#qa').innerHTML=QA.map(([q,a])=>`<li><details><summary><span>${q}</span></summary><p class="ans">${a}</p></details></li>`).join('');
+
+/* ---------- запуск ---------- */
+const h=(location.hash||'').slice(1);
+openTab(tabs.some(t=>t.dataset.tab===h)?h:'opyt');
+resetState(); renderTable(); resizeChart();
+requestAnimationFrame(t=>{ last=t; requestAnimationFrame(frame); });
+})();
+</script>
+
+</body>
+</html>
